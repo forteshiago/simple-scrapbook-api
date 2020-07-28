@@ -1,0 +1,17 @@
+{
+  "name": "scrapbook-api",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/Robert539/simple-scrapbook-api.git",
+  "author": "Robert Meurer <robertmeureraraujo@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "scripts": {
+    "dev": "nodemon src/main.js"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  }
+}
