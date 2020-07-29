@@ -1,15 +1,12 @@
 const express = require("express");
 
 const { uuid } = require("uuidv4");
-const { response, request } = require("express");
 
 const app = express();
 
 app.use(express.json());
 
-const scraps = [
-  //{id:"1", titulo: "Titulo fixo 01", mensagem:"Mensagem fixa 01"},
-];
+const scraps = [];
 
 //listar todos os cards
 app.get("/scrapbook", (request, response) => {
