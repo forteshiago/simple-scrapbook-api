@@ -13,11 +13,11 @@ const scraps = [
 
 //listar todos os cards
 app.get("/scrapbook", (request, response) => {
-  //const { title } = request.query;
+  const { title } = request.query;
 
-  //const card = title ? scrap.filter((project) => project.title.includes(title)) : scraps;
+  const card = title ? scraps.filter((scrap) => scrap.title.includes(title)) : scraps;
 
-  return response.json(scraps);
+  return response.json(card);
 });
 
 //acrescentar um novo card
