@@ -1,12 +1,61 @@
 const express = require("express");
 
-const { uuid } = require("uuidv4");
+const { uuid, isUuid } = require("uuidv4");
 
 const app = express();
 
 app.use(express.json());
 
+// ------------------------------------------------------------
+
 const scraps = [];
+
+// ------------------------------------------------------------
+
+function logRequests(request, response, next){
+
+  const {method, url} = request;
+  const logLabel = `[${method.toUpperCase()}] ${url}`;
+
+  console.time(logLabel);
+
+  next();
+
+  console.timeEnd(logLabel);
+};
+
+// ------------------------------------------------------------
+
+function validateScrapId(request, response, next){
+
+  const {id} = request.params;
+
+  if(!isUuid(id)){
+    return response.status(400).json({error: `Param sent is not a valid UUID`});
+  };
+  next();
+};
+
+// ------------------------------------------------------------
+
+function checkEmptyFields(request, response, next){
+
+  const {title, message} = request.body;
+
+  let checkTitle = title == null ? false : title == "" ? false : true;
+  let checkMessage = message == null ? false : message == "" ? false : true;
+
+  if(checkTitle == false || checkMessage == false){
+    return response.status(400).json({error: `Blank fields!`});
+  };
+  next();
+};
+
+// ------------------------------------------------------------
+
+app.use(logRequests);
+
+// ------------------------------------------------------------
 
 //listar todos os cards
 app.get("/scrapbook", (request, response) => {
@@ -18,10 +67,10 @@ app.get("/scrapbook", (request, response) => {
 });
 
 //acrescentar um novo card
-app.post("/scrapbook", (request, response) => {
+app.post("/scrapbook", checkEmptyFields, (request, response) => {
 
   const {title, message} = request.body;
-  const card = {id: String("POST-AQUI-"+uuid()), title, message};
+  const card = {id: uuid(), title, message};
 
   scraps.push(card);
 
@@ -29,14 +78,14 @@ app.post("/scrapbook", (request, response) => {
 });
 
 //modificar card de acordo com o id
-app.put("/scrapbook/:id", (request, response) => {
+app.put("/scrapbook/:id", checkEmptyFields, validateScrapId, (request, response) => {
   
   const { id } = request.params;
   const {title, message} = request.body;
   const scrapIndex = scraps.findIndex((scrap) => scrap.id == id);
 
   if(scrapIndex < 0){
-    return response.status(400).json({"update error":`Scrap nao encontrado! 
+    return response.status(400).json({error:`Scrap nao encontrado! 
     ==> Id recusado: ${id} <==`})
   };
 
@@ -52,7 +101,7 @@ app.put("/scrapbook/:id", (request, response) => {
 });
 
 //deletar card de acordo com o id
-app.delete("/scrapbook/:id", (request, response) => {
+app.delete("/scrapbook/:id", validateScrapId, (request, response) => {
 
   const { id } = request.params;
   const scrapIndex = scraps.findIndex((scrap) => scrap.id == id)
@@ -67,7 +116,8 @@ app.delete("/scrapbook/:id", (request, response) => {
   return response.status(204).send();
 });
 
-// ------------------------------------------
+// ------------------------------------------------------------
+
 //a partir daqui deve ser o final do arquivo
 const port = 3333;
 
