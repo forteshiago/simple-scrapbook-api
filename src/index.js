@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 const express = require("express");
 const cors = require("cors");
 const { uuid, isUuid } = require("uuidv4");
@@ -86,7 +88,7 @@ app.put("/scrapbook/:id", checkEmptyFields, validateScrapId, (request, response)
   const scrapIndex = scraps.findIndex((scrap) => scrap.id == id);
 
   if(scrapIndex < 0){
-    return response.status(400).json({error:`Scrap nao encontrado! 
+    return response.status(400).json({error:`Put - Scrap nao encontrado! 
     ==> Id recusado: ${id} <==`})
   };
 
@@ -108,7 +110,7 @@ app.delete("/scrapbook/:id", validateScrapId, (request, response) => {
   const scrapIndex = scraps.findIndex((scrap) => scrap.id == id)
 
   if(scrapIndex < 0){
-    return response.status(400).json({"delete error":`Scrap nao encontrado! 
+    return response.status(400).json({error:`Delete - Scrap nao encontrado! 
     ==> Id recusado: ${id} <==`});
   };
 
@@ -120,7 +122,7 @@ app.delete("/scrapbook/:id", validateScrapId, (request, response) => {
 // ------------------------------------------------------------
 
 //a partir daqui deve ser o final do arquivo
-const port = 3333;
+const port = process.env.PORT || 3333;
 
 app.listen(port, () => {
   console.log(`🚀 Back-end started on PORT ${port} 🚀`);
